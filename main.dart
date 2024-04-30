@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 void main() => runApp(TicTacToeApp());
@@ -20,6 +21,8 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
   List<String> _boardState = List.filled(9, "");
   String _currentPlayer = "X";
   String _winner = "";
+  int _timeRemaining = 10;
+  Timer? _timer;
 
   void _handleCellTap(int index) {
     if (_boardState[index].isEmpty && _winner.isEmpty) {
@@ -27,6 +30,7 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
         _boardState[index] = _currentPlayer;
         _currentPlayer = _currentPlayer == "X" ? "O" : "X";
         _checkWinner();
+        _resetTimer();
       });
     }
   }
@@ -88,14 +92,54 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
       _boardState = List.filled(9, "");
       _currentPlayer = "X";
       _winner = "";
+      _timeRemaining = 10;
     });
+    _startTimer();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_timeRemaining > 0) {
+          _timeRemaining--;
+        } else {
+          _handleTimeout();
+        }
+      });
+    });
+  }
+
+  void _resetTimer() {
+    _timer?.cancel();
+    _timeRemaining = 10;
+    _startTimer();
+  }
+
+  void _handleTimeout() {
+    setState(() {
+      _winner = _currentPlayer == "X" ? "O" : "X";
+    });
+    _timer?.cancel();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Tic Tac Toe"),
+        centerTitle: true,
+        title: Text("X - O Game"),
       ),
       body: Column(
         children: [
@@ -108,7 +152,7 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
                   onTap: () => _handleCellTap(index),
                   child: Container(
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
+                      border: Border.all(color: Colors.black),
                     ),
                     child: Center(
                       child: Text(
@@ -125,8 +169,18 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                Text("Current Player: $_currentPlayer"),
-                Text(_winner.isNotEmpty ? "Winner: $_winner" : ""),
+                Text(
+                  "Time Remaining: $_timeRemaining",
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "Current Player: $_currentPlayer",
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  _winner.isNotEmpty ? "Winner: $_winner" : "",
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
                 ElevatedButton(
                   onPressed: _resetGame,
                   child: Text("Reset Game"),
