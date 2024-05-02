@@ -69,12 +69,12 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
       });
       return;
     }
-
     if (_boardState[2] == _boardState[4] &&
         _boardState[2] == _boardState[6] &&
         _boardState[2].isNotEmpty) {
       setState(() {
         _winner = _boardState[2];
+
       });
       return;
     }
@@ -140,9 +140,19 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
       appBar: AppBar(
         centerTitle: true,
         title: Text("X - O Game"),
+        backgroundColor: Colors.amberAccent,
       ),
       body: Column(
         children: [
+          // Time Remaining at the top
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              "Time Remaining: $_timeRemaining",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+          ),
+
           Expanded(
             child: GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
@@ -157,7 +167,10 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
                     child: Center(
                       child: Text(
                         _boardState[index],
-                        style: TextStyle(fontSize: 48),
+                        style: TextStyle(
+                          fontSize: 48,
+                          color: _boardState[index] == "X" ? Colors.blue : Colors.red,
+                        ),
                       ),
                     ),
                   ),
@@ -165,14 +178,11 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
               },
             ),
           ),
+
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                Text(
-                  "Time Remaining: $_timeRemaining",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
                 Text(
                   "Current Player: $_currentPlayer",
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -183,6 +193,12 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
                 ),
                 ElevatedButton(
                   onPressed: _resetGame,
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.green,
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    textStyle: TextStyle(fontSize: 18),
+                  ),
                   child: Text("Reset Game"),
                 ),
               ],
