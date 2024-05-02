@@ -74,7 +74,6 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
         _boardState[2].isNotEmpty) {
       setState(() {
         _winner = _boardState[2];
-
       });
       return;
     }
@@ -144,14 +143,15 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
       ),
       body: Column(
         children: [
-          // Time Remaining at the top
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              "Time Remaining: $_timeRemaining",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          // Conditionally show Time Remaining based on _winner
+          if (_winner.isEmpty)
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                "Time Remaining: $_timeRemaining",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
             ),
-          ),
 
           Expanded(
             child: GridView.builder(
